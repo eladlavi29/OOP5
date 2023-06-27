@@ -12,10 +12,19 @@
 #include "Observer.h"
 using namespace std;
 
-
 template <class T>
 class Subject{
     vector<Observer<T>*> observers;
+
+    int find_index(Observer<T>* obs_ptr){
+        for(int i = 0; i<this->observers.size(); i++)
+        {
+            if(this->observers[i]==obs_ptr){
+                return i;
+            }
+        }
+        return -1;
+    }
 
 public:
     Subject()= default;
@@ -28,18 +37,18 @@ public:
     }
 
     void addObserver(Observer<T>& obs){
-        if(find<Observer<T>*>(observers.begin(), observers.end(), obs) == observers.end()){
+        if(find_index(&obs) != -1){
             throw ObserverAlreadyKnownToSubject();
         }
         observers.push_back(&obs);
     }
 
     void removeObserver(Observer<T>& obs){
-        auto it = find<Observer<T>*>(observers.begin(), observers.end(), obs);
-        if(it == observers.end()) {//not found
+        int ind = find_index(&obs);
+        if(ind == -1) {//not found
             throw ObserverUnknownToSubject();
         }
-        observers.erase(it);
+        observers.erase(observers.begin() + ind);
     }
 
     Subject<T>& operator+=(Observer<T>& obs){
