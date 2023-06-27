@@ -17,6 +17,15 @@ template <class T>
 class Subject{
     vector<Observer<T>*> observers;
 
+    typename vector<Observer<T>*>::iterator findObserver(Observer<T>& obs){
+        for(auto observer : observers){
+            if (observer == obs)
+                return observer;
+        }
+
+        return observers.end();
+    };
+
 public:
     Subject()= default;
 
@@ -28,14 +37,14 @@ public:
     }
 
     void addObserver(Observer<T>& obs){
-        if(find<Observer<T>*>(observers.begin(), observers.end(), obs) == observers.end()){
+        if(findObserver() == observers.end()){
             throw ObserverAlreadyKnownToSubject();
         }
         observers.push_back(&obs);
     }
 
     void removeObserver(Observer<T>& obs){
-        auto it = find<Observer<T>*>(observers.begin(), observers.end(), obs);
+        auto it = findObserver();
         if(it == observers.end()) {//not found
             throw ObserverUnknownToSubject();
         }
