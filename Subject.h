@@ -21,7 +21,7 @@ public:
     Subject(){}
 
     void notify(const T&){
-        for(obs : observers)
+        for(auto obs : observers)
         {
             obs.handleEvent();
         }
