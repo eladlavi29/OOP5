@@ -8,6 +8,7 @@
 using namespace std;
 
 int main(){
+
     int val = ConditionalInteger<(0 != 1), 0, 1>::value;
     cout << (val == 0) << endl;
     val = ConditionalInteger<(0 == 1), 0, 1>::value; // = 1
