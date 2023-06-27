@@ -28,14 +28,14 @@ public:
     }
 
     void addObserver(Observer<T>& obs){
-        if(find(observers.begin(), observers.end(), obs) == observers.end()){
+        if(find<Observer<T>*>(observers.begin(), observers.end(), obs) == observers.end()){
             throw ObserverAlreadyKnownToSubject();
         }
         observers.push_back(&obs);
     }
 
     void removeObserver(Observer<T>& obs){
-        auto it = find(observers.begin(), observers.end(), obs);
+        auto it = find<Observer<T>*>(observers.begin(), observers.end(), obs);
         if(it == observers.end()) {//not found
             throw ObserverUnknownToSubject();
         }

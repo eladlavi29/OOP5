@@ -8,7 +8,7 @@
 template <class T>
 class Observer {
 public:
-    Observer(){}
+    Observer() = default;
     virtual void handleEvent(const T&) = 0;
 };
 
