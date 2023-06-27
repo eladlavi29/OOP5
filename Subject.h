@@ -15,15 +15,15 @@ using namespace std;
 
 template <class T>
 class Subject{
-    vector<Observer<T>> observers;
+    vector<Observer<T>*> observers;
 
 public:
-    Subject(){}
+    Subject()= default;
 
-    void notify(const T&){
-        for(auto obs : observers)
+    void notify(const T& param){
+        for(Observer<T>* obs : observers)
         {
-            obs.handleEvent();
+            obs->handleEvent(param);
         }
     }
 
@@ -31,7 +31,7 @@ public:
         if(find(observers.begin(), observers.end(), obs) == observers.end()){
             throw ObserverAlreadyKnownToSubject();
         }
-        observers.pushback(obs);
+        observers.push_back(&obs);
     }
 
     void removeObserver(Observer<T>& obs){
