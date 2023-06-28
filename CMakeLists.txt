@@ -6,7 +6,16 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(.)
 
 add_executable(OOP5
-        part1/Observer.h
-        part1/OOP5EventException.h
-        part1/Part1Examples.cpp
-        part1/Subject.h)
+        part2/BoardCell.h
+        part2/CellType.h
+        part2/Direction.h
+        part2/GameBoard.h
+        part2/Int.h
+        part2/List.h
+        part2/MoveVehicle.h
+        part2/Printer.h
+        part2/TransposeList.h
+        part2/Utilities.h
+
+        part2/OOP5_Part2_TestHeader.h
+        part2/move_test.cpp)
