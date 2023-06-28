@@ -100,9 +100,8 @@ struct Comp_Directions<LEFT, LEFT>{
 
 template <int N>
 struct dec_abs{
-    enum{
-        res = ConditionalInteger<(N>0), N-1,N+1>::value
-    };
+    static const int tmp1 = ConditionalInteger<(N>0), N-1,N+1>::value;
+    static const int res = ConditionalInteger<(N==0), 0,tmp1>::value;
 };
 
 template<int C, CellType TYPE, int MAX,typename T>
@@ -134,53 +133,6 @@ struct find_edges_horiz<GameBoard<List<TT...>>, R, C, D, A>{
     static const int temp = ConditionalInteger<D==LEFT,Cell::length,-1*Cell::length>::value;
     static const int start = getStart<C,Cell::type,temp,Row>::res;
     static const int end = ConditionalInteger<D==LEFT,(getStart<C,Cell::type,-1*temp,Row>::res)-1,(getStart<C,Cell::type,-1*temp,Row>::res)+1>::value;
-};
-
-template<int, int, int, int, Direction, typename>
-struct MoveVehicleAux{};
-
-template<int A, int R, int CS, int CE, Direction D, typename... TT>
-struct MoveVehicleAux<A, R, CS, CE, D, GameBoard<List<TT...>>>{
-    static_assert(C >= 0 && C < GameBoard<List<TT...>>::width, "Car moved outside of the board!\n");
-
-    typedef typename GetCell<List<TT...>,R,CS>::cell moveFrom;
-    typedef typename GetCell<List<TT...>,R,CE>::cell moveTo;
-    static_assert(moveTo::type == EMPTY, "Car moved to an occupied board cell!\n");
-
-    typedef typename SetCell<List<TT...>, R, CS,
-        BoardCell<EMPTY, moveFrom::direction, moveFrom::length>>::value boardUpdate1;
-
-    typedef typename SetCell<boardUpdate1 , R, CE,
-            BoardCell<moveFrom::type, moveFrom::direction, moveFrom::length>>::value boardUpdate2;
-
-    enum{
-        fromMovement = ConditionalInteger<(D == RIGHT), CS + 1, CS - 1>::value,
-        toMovement = ConditionalInteger<(D == RIGHT), CE + 1, CE - 1>::value
-    };
-
-    typedef typename MoveVehicleAux<A - 1, R, fromMovement, toMovement, D,
-        GameBoard<boardUpdate2>>::gameboard gameboard;
-};
-
-template<int R, int CS, int CE, Direction D, typename... TT>
-struct MoveVehicleAux<0, R, CS, CE, D, GameBoard<List<TT...>>>{
-    typedef GameBoard<List<TT...>> gameboard;
-};
-
-template<typename GB, int, int, Direction, int, typename... TT>
-struct MoveVehicle_Horiz{};
-
-template<int R, int C, Direction D, int A, typename... TT>
-struct MoveVehicle_Horiz<GameBoard<List<TT...>>, R, C, D, A>{
-    typedef GameBoard<List<TT...>> initial_Board;
-    typedef typename GetCell<List<TT...>,R,C>::cell Cell;
-    static_assert((R>=0 && R<initial_Board::length), "Row is not in Range!");
-    static_assert((C>=0 && C<initial_Board::width), "Column is not in Range!");
-    static_assert((R>=0 && R<initial_Board::length), "Row is not in Range!");
-    static_assert(Cell::type!=EMPTY,"The Selected Cell is EMPTY");
-    static_assert(Comp_Directions<Cell::direction,D>::value, "Directions of car and movement are Not Compatible!");
-    typedef find_edges_horiz<GameBoard<List<TT...>>, R, C, D, A> Temp;
-    typedef typename MoveVehicleAux<A, R, Temp::start,Temp::end, D, GameBoard<List<TT...>>>::gameboard board;
 };
 
 template<Direction D>
@@ -238,6 +190,96 @@ struct TransposeData<GameBoard<List<TT...>>, R, C, D, A>{
     typedef typename AlterMat<Temp_mat,sizeof...(TT)>::AlteredMat  transposed_mat;
 };
 
+template<int, int, int, int, Direction, typename>
+struct MoveVehicleAux{};
+
+template<int A, int R, int CS, int CE, Direction D, typename... TT>
+struct MoveVehicleAux<A, R, CS, CE, D, GameBoard<List<TT...>>>{
+    typedef typename GetCell<List<TT...>,R,CS>::cell moveFrom;
+    typedef typename GetCell<List<TT...>,R,CE>::cell moveTo;
+    static_assert(moveTo::type == EMPTY, "Car moved to an occupied board cell!\n");
+
+    typedef typename SetCell<List<TT...>, R, CS,
+        BoardCell<EMPTY, moveFrom::direction, moveFrom::length>>::value boardUpdate1;
+
+    typedef typename SetCell<boardUpdate1 , R, CE,
+            BoardCell<moveFrom::type, moveFrom::direction, moveFrom::length>>::value boardUpdate2;
+
+    enum{
+        fromMovement = ConditionalInteger<(D == RIGHT), CS + 1, CS - 1>::value,
+        toMovement = ConditionalInteger<(D == RIGHT), CE + 1, CE - 1>::value
+    };
+
+    typedef typename MoveVehicleAux<A - 1, R, fromMovement, toMovement, D,
+        GameBoard<boardUpdate2>>::gameboard gameboard;
+};
+
+template<int R, int CS, int CE, Direction D, typename... TT>
+struct MoveVehicleAux<0, R, CS, CE, D, GameBoard<List<TT...>>>{
+    typedef GameBoard<List<TT...>> gameboard;
+};
+
+template<typename GB, int, int, Direction, int, typename... TT>
+struct MoveVehicle_Horiz{};
+
+template<int R, int C, Direction D, int A, typename... TT>
+struct MoveVehicle_Horiz<GameBoard<List<TT...>>, R, C, D, A>{
+    typedef GameBoard<List<TT...>> initial_Board;
+    typedef typename GetCell<List<TT...>,R,C>::cell Cell;
+    static_assert((R>=0 && R<initial_Board::length), "Row is not in Range!");
+    static_assert((C>=0 && C<initial_Board::width), "Column is not in Range!");
+    static_assert((R>=0 && R<initial_Board::length), "Row is not in Range!");
+    static_assert(Cell::type!=EMPTY,"The Selected Cell is EMPTY");
+    static_assert(Comp_Directions<Cell::direction,D>::value, "Directions of car and movement are Not Compatible!");
+    typedef find_edges_horiz<GameBoard<List<TT...>>, R, C, D, A> Temp;
+    typedef typename MoveVehicleAux<A, R, Temp::start,Temp::end, D, GameBoard<List<TT...>>>::gameboard board;
+};
+
+template<int R, int C, int A, typename... TT>
+struct MoveVehicle_Horiz<GameBoard<List<TT...>>, R, C, UP, A>{
+    typedef GameBoard<List<TT...>> board;
+};
+
+template<int R, int C, int A, typename... TT>
+struct MoveVehicle_Horiz<GameBoard<List<TT...>>, R, C, DOWN, A>{
+    typedef GameBoard<List<TT...>> board;
+};
+
+template<typename GB, int, int, Direction, int, typename... TT>
+struct MoveVehicle_Vert{};
+
+template<int R, int C, Direction D, int A, typename... TT>
+struct MoveVehicle_Vert<GameBoard<List<TT...>>, R, C, D, A>{
+    typedef TransposeData<GameBoard<List<TT...>>, R, C, D, A> transposed_data;
+    typedef typename transposed_data::transposed_mat temp;
+    typedef typename MoveVehicle_Horiz<GameBoard<temp>,
+    transposed_data::transpoded_R,
+            transposed_data::transpoded_C, transposed_data::transpoded_D, A>::board temp_board1;
+    typedef TransposeData<temp_board1, transposed_data::transpoded_R,
+            transposed_data::transpoded_C, transposed_data::transpoded_D, A> transposed_data2;
+    typedef typename transposed_data2::transposed_mat temp_board3;
+    typedef GameBoard<temp_board3> board;
+};
+
+template<int R, int C, int A, typename... TT>
+struct MoveVehicle_Vert<GameBoard<List<TT...>>, R, C, LEFT, A>{
+    typedef GameBoard<List<TT...>> board;
+};
+
+template<int R, int C, int A, typename... TT>
+struct MoveVehicle_Vert<GameBoard<List<TT...>>, R, C, RIGHT, A>{
+    typedef GameBoard<List<TT...>> board;
+};
+
+template<typename GB, int, int, Direction, int, typename... TT>
+struct MoveVehicle{};
+
+template<int R, int C, Direction D, int A, typename... TT>
+struct MoveVehicle<GameBoard<List<TT...>>, R, C, D, A>{
+    typedef typename MoveVehicle_Horiz<GameBoard<List<TT...>>, R, C, D, A>::board tmp1;
+    typedef typename MoveVehicle_Vert<GameBoard<List<TT...>>, R, C, D, A>::board tmp2;
+    typedef typename Conditional<(D==LEFT||D==RIGHT), tmp1, tmp2>::value board;
+};
 
 
 

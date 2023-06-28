@@ -11,13 +11,13 @@ using namespace std;
 #include "Printer.h"
 int main(){
     typedef BoardCell<EMPTY, RIGHT, 2> Cell1;
-    typedef BoardCell<X, UP, 2> Cell2;
-    typedef BoardCell<X, DOWN, 2> Cell3;
-    typedef BoardCell<A, LEFT, 4> Cell4;
+    typedef BoardCell<X, LEFT, 2> Cell2;
+    typedef BoardCell<X, LEFT, 2> Cell3;
+    typedef BoardCell<A, UP, 2> Cell4;
     typedef BoardCell<EMPTY, RIGHT, 2> Cell5;
     typedef BoardCell<EMPTY, RIGHT, 2> Cell6;
-    typedef BoardCell<A, DOWN, 3> Cell7;
-    typedef BoardCell<P, LEFT, 4> Cell8;
+    typedef BoardCell<A, UP, 2> Cell7;
+    typedef BoardCell<P, RIGHT, 1> Cell8;
     typedef BoardCell<EMPTY, RIGHT, 2> Cell9;
 
     typedef List<Cell1, Cell2, Cell3> List1;
@@ -55,12 +55,24 @@ int main(){
 //    cout << Res7::direction << endl;
 //    cout << Res8::direction << endl;
 //    cout << Res9::direction << endl;
+//    typedef TransposeData<Board, 1, 0, RIGHT, 2> transposed_data;
+//    cout<<  transposed_data::transpoded_C<< endl;
+//    cout<<  transposed_data::transpoded_R<< endl;
+//    cout<<  transposed_data::transpoded_D<< endl;
+//    Printer<Board>::print(std::cout);
+//    Printer<GameBoard<transposed_data::transposed_mat>>::print(std::cout);
 
-
-    typedef TransposeData<Board, 1, 0, RIGHT, 2> transposed_data;
+    typedef TransposeData<Board, 1, 0, DOWN, 1> transposed_data;
     cout<<  transposed_data::transpoded_C<< endl;
     cout<<  transposed_data::transpoded_R<< endl;
     cout<<  transposed_data::transpoded_D<< endl;
     Printer<Board>::print(std::cout);
     Printer<GameBoard<transposed_data::transposed_mat>>::print(std::cout);
+
+    Printer<Board>::print(std::cout);
+    typedef MoveVehicle<Board, 1, 0, UP, 1>::board gameboard2;
+    Printer<gameboard2>::print(std::cout);
+
+    typedef MoveVehicle<gameboard2, 1, 0, DOWN, 1>::board gameboard3;
+    Printer<gameboard3>::print(std::cout);
 }
