@@ -5,6 +5,8 @@
 #ifndef OOP5_MOVEVEHICLE_H
 #define OOP5_MOVEVEHICLE_H
 
+#include "List.h"
+#include "Utilities.h"
 #include "CellType.h"
 #include "Direction.h"
 
@@ -20,3 +22,17 @@ struct Move{
 
 
 #endif //OOP5_MOVEVEHICLE_H
+
+
+
+
+
+
+
+
+
+
+
+
+
+
