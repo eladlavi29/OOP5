@@ -11,6 +11,7 @@
 #include "Direction.h"
 #include "BoardCell.h"
 #include "GameBoard.h"
+#include "TransposeList.h"
 
 template<CellType T, Direction D, int A>
 struct Move{
@@ -172,7 +173,7 @@ struct MoveVehicle_Horiz{};
 template<int R, int C, Direction D, int A, typename... TT>
 struct MoveVehicle_Horiz<GameBoard<List<TT...>>, R, C, D, A>{
     typedef GameBoard<List<TT...>> initial_Board;
-    typedef typename  GetCell<List<TT...>,R,C>::cell Cell;
+    typedef typename GetCell<List<TT...>,R,C>::cell Cell;
     static_assert((R>=0 && R<initial_Board::length), "Row is not in Range!");
     static_assert((C>=0 && C<initial_Board::width), "Column is not in Range!");
     static_assert((R>=0 && R<initial_Board::length), "Row is not in Range!");
@@ -181,6 +182,62 @@ struct MoveVehicle_Horiz<GameBoard<List<TT...>>, R, C, D, A>{
     typedef find_edges_horiz<GameBoard<List<TT...>>, R, C, D, A> Temp;
     typedef typename MoveVehicleAux<A, R, Temp::start,Temp::end, D, GameBoard<List<TT...>>>::gameboard board;
 };
+
+template<Direction D>
+struct TransposeDirection{
+    static const int temp1 = ConditionalInteger<D==DOWN,RIGHT,LEFT>::value;
+    static const int temp2 = ConditionalInteger<D==RIGHT,DOWN,UP>::value;
+    static const int transposed = ConditionalInteger<(D==DOWN||D==UP),temp1,temp2>::value;
+};
+
+template<typename GB, int, int, Direction, int, typename... TT>
+struct TransposeData{};
+
+template<typename, int>
+struct AlterRow{};
+
+template<int N, typename T, typename... TT>
+struct AlterRow<List<T,TT...>,N>{
+    static const CellType Temp_type = T::type;
+    static const Direction Temp_direction = T::direction;
+    static const int Temp_length = T::length;
+    static const int transposed_direction_tmp = TransposeDirection<Temp_direction>::transposed;
+    static const Direction transposed_direction = static_cast<Direction>(transposed_direction_tmp);
+    typedef BoardCell<Temp_type, transposed_direction, Temp_length> Temp;
+    typedef typename AlterRow<List<TT...>, N-1>::AlteredRow Temp_Row;
+    typedef typename PrependList<Temp,Temp_Row>::list AlteredRow;
+};
+
+template<typename... TT>
+struct AlterRow<List<TT...>,0>{
+    typedef List<TT...> AlteredRow;
+};
+
+template<typename, int>
+struct AlterMat{};
+
+//N=SIZE OF LIST
+template<int N,typename T, typename... TT>
+struct AlterMat<List<T,TT...>, N>{
+    typedef typename AlterRow<T, T::size>::AlteredRow Temp;
+    typedef typename AlterMat<List<TT...>, N-1>::AlteredMat TempMat;
+    typedef typename PrependList<Temp,TempMat>::list AlteredMat;
+};
+
+template<typename... TT>
+struct AlterMat<List<TT...>, 0>{
+    typedef List<TT...> AlteredMat;
+};
+
+template<int R, int C, Direction D, int A, typename... TT>
+struct TransposeData<GameBoard<List<TT...>>, R, C, D, A>{
+    static const int transpoded_C = R;
+    static const int transpoded_R = C;
+    static const Direction transpoded_D = static_cast<Direction>(TransposeDirection<D>::transposed);
+    typedef typename Transpose<List<TT...>>::matrix Temp_mat;
+    typedef typename AlterMat<Temp_mat,sizeof...(TT)>::AlteredMat  transposed_mat;
+};
+
 
 
 
