@@ -14,10 +14,8 @@ struct GameBoard;
 template<typename T, typename... TT>
 struct GameBoard<List<T,TT...>>{
     typedef List<T,TT...> board;
-    enum {
-        width = T::size,
-        length = List<T,TT...>::size
-    };
+    static const int width = T::size;
+    static const int length =  List<T,TT...>::size;
 };
 
 #endif //OOP5_GAMEBOARD_H

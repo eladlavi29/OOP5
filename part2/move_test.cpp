@@ -15,15 +15,15 @@ int main() {
     typedef BoardCell<A, RIGHT, 2> Cell2;
     typedef BoardCell<EMPTY, DOWN, 3> Cell3;
     typedef BoardCell<EMPTY, LEFT, 8> Cell4;
-    typedef BoardCell<B, LEFT, 4> Cell5;
+    typedef BoardCell<B, LEFT, 1> Cell5;
 
     typedef List<Cell1, Cell2, Cell3, Cell4, Cell5> Raw1;
 
     typedef List<Raw1> board;
 
-    typedef GameBoard<board> gameBoard1;
-    Printer<gameBoard1>::print(std::cout);
+    typedef GameBoard<board> gameboard1;
+    Printer<gameboard1>::print(std::cout);
 
-    typedef MoveVehicleAux<gameBoard1, 0, 0, 2, RIGHT, 1>::gameboard gameBoard2;
-    Printer<gameBoard2>::print(std::cout);
+    typedef MoveVehicleAux<2, 0, 0, 2, RIGHT, gameboard1>::gameboard gameboard2;
+    Printer<gameboard2>::print(std::cout);
 }

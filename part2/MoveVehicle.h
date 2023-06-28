@@ -37,10 +37,9 @@ struct SetCell{};
 template<int R, int C, typename S, typename... TT>
 struct SetCell<List<TT...>,R,C,S>{
     typedef typename GetAtIndex<R,List<TT...>>::value temp1;
-    typedef typename SetAtIndex<C,S,temp1>::value temp2;
-    enum{
-        value = SetAtIndex<R,temp2, List<TT...>>::value
-    };
+    typedef typename SetAtIndex<C,S,temp1>::list temp2;
+
+    typedef typename SetAtIndex<R,temp2, List<TT...>>::list value;
 };
 
 template<Direction, Direction>
@@ -132,16 +131,16 @@ struct find_edges_horiz<GameBoard<List<TT...>>, R, C, D, A>{
     };
 };
 
-template<typename, int, int, int, Direction, int>
+template<int, int, int, int, Direction, typename>
 struct MoveVehicleAux{};
 
-template<typename... TT, int R, int CS, int CE, Direction D, int A>
-struct MoveVehicleAux<GameBoard<List<TT...>>, R, CS, CE, D, A>{
+template<int A, int R, int CS, int CE, Direction D, typename... TT>
+struct MoveVehicleAux<A, R, CS, CE, D, GameBoard<List<TT...>>>{
     static_assert(C >= 0 && C < GameBoard<List<TT...>>::width, "Car moved outside of the board!\n");
 
     typedef typename GetCell<List<TT...>,R,CS>::cell moveFrom;
     typedef typename GetCell<List<TT...>,R,CE>::cell moveTo;
-    static_assert(moveTo::type != EMPTY, "Car moved to an occupied board cell!\n");
+    static_assert(moveTo::type == EMPTY, "Car moved to an occupied board cell!\n");
 
     typedef typename SetCell<List<TT...>, R, CS,
         BoardCell<EMPTY, moveFrom::direction, moveFrom::length>>::value boardUpdate1;
@@ -150,16 +149,17 @@ struct MoveVehicleAux<GameBoard<List<TT...>>, R, CS, CE, D, A>{
             BoardCell<moveFrom::type, moveFrom::direction, moveFrom::length>>::value boardUpdate2;
 
     enum{
-        fromMovement = ConditionalInteger<(D == RIGHT), CS + 1, CE + 1>::value,
-        toMovement = ConditionalInteger<(D == RIGHT), CS - 1, CE - 1>::value,
-        gameboard = MoveVehicleAux<GameBoard<List<TT...>>, R,
-            fromMovement, toMovement, D, A - 1>::gameboard
+        fromMovement = ConditionalInteger<(D == RIGHT), CS + 1, CS - 1>::value,
+        toMovement = ConditionalInteger<(D == RIGHT), CE + 1, CE - 1>::value
     };
+
+    typedef typename MoveVehicleAux<A - 1, R, fromMovement, toMovement, D,
+        GameBoard<boardUpdate2>>::gameboard gameboard;
 };
 
-template<typename G, int RS, int CS, int CE, Direction D>
-struct MoveVehicleAux<G, RS, CS, CE, D, 0>{
-    typedef G gameboard;
+template<int R, int CS, int CE, Direction D, typename... TT>
+struct MoveVehicleAux<0, R, CS, CE, D, GameBoard<List<TT...>>>{
+    typedef GameBoard<List<TT...>> gameboard;
 };
 
 template<typename GB, int, int, Direction, int, typename... TT>
@@ -170,11 +170,12 @@ struct MoveVehicle_Horiz<GameBoard<List<TT...>>, R, C, D, A>{
     typedef GameBoard<List<TT...>> initial_Board;
     typedef typename  GetCell<List<TT...>,R,C>::cell Cell;
     static_assert((R>=0 && R<initial_Board::length), "Row is not in Range!");
-    static_assert((C>=0 && C<initial_Board::width), "Column is not in Range!");static_assert((R>=0 && R<initial_Board::length), "Row is not in Range!");
+    static_assert((C>=0 && C<initial_Board::width), "Column is not in Range!");
+    static_assert((R>=0 && R<initial_Board::length), "Row is not in Range!");
     static_assert(Cell::type!=EMPTY,"The Selected Cell is EMPTY");
     static_assert(Comp_Directions<Cell::direction,D>::value, "Directions of car and movement are Not Compatible!");
     typedef find_edges_horiz<GameBoard<List<TT...>>, R, C, D, A> Temp;
-    typedef typename MoveVehicleAux<GameBoard<List<TT...>>, R, Temp::start, Temp::end, D, A>::gameboard board;
+    //typedef typename MoveVehicleAux<GameBoard<List<TT...>>, R, Temp::start, Temp::end, D, A>::gameboard board;
 };
 
 

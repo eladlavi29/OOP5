@@ -10,11 +10,9 @@
 
 template<CellType T, Direction D, int L>
 struct BoardCell{
-    enum {
-        type = T,
-        direction = D,
-        length = L
-    };
+    static const CellType type = T;
+    static const Direction direction = D;
+    static const int length = L;
 };
 
 #endif //OOP5_BOARDCELL_H
