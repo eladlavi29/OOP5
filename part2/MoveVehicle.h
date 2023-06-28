@@ -105,17 +105,22 @@ struct dec_abs{
     };
 };
 
-
-
-template<int,CellType,int,typename... TT>
+template<int C, CellType TYPE, int MAX,typename T>
 struct getStart{};
 
 //MAX is the len of the car at the beginning (could be either pos or neg)
 template<int C, CellType TYPE, int MAX, typename... TT>
 struct getStart<C,TYPE,MAX,List<TT...>>{
-    enum{
-        res = ConditionalInteger<GetAtIndex<C+MAX,List<TT...>>::value::type==TYPE, C+MAX, getStart<C,TYPE,dec_abs<MAX>::res,List<TT...>>::res>::value
-    };
+    static const int Eff_Max_tmp = ConditionalInteger<(C+MAX<0), 0, C+MAX>::value;
+    static const int Eff_Max = ConditionalInteger<(Eff_Max_tmp>=List<TT...>::size), List<TT...>::size-1, Eff_Max_tmp>::value;
+    typedef typename GetAtIndex<Eff_Max,List<TT...>>::value Cell;
+    static const int res = ConditionalInteger<Cell::type==TYPE, Eff_Max, getStart<C,TYPE,dec_abs<Eff_Max-C>::res,List<TT...>>::res>::value;
+};
+
+//speciaization
+template<int C, CellType TYPE, typename... TT>
+struct getStart<C,TYPE,0,List<TT...>>{
+    static const int res = C;
 };
 
 template<typename, int, int, Direction, int>
@@ -125,11 +130,10 @@ template<int R, int C, Direction D, int A, typename... TT>
 struct find_edges_horiz<GameBoard<List<TT...>>, R, C, D, A>{
     typedef typename GetCell<List<TT...>,R,C>::cell Cell;
     typedef typename GetAtIndex<R,List<TT...>>::value Row;
-    enum{
-        temp = ConditionalInteger<D==LEFT,Cell::length,-1*Cell::length>::value,
-        start = getStart<C,Cell::type,temp,Row>::res,
-        end = ConditionalInteger<D==LEFT,getStart<C,Cell::type,-1*temp,Row>::res-1,getStart<C,Cell::type,-1*temp,Row>::res+1>::value
-    };
+
+    static const int temp = ConditionalInteger<D==LEFT,Cell::length,-1*Cell::length>::value;
+    static const int start = getStart<C,Cell::type,temp,Row>::res;
+    static const int end = ConditionalInteger<D==LEFT,(getStart<C,Cell::type,-1*temp,Row>::res)-1,(getStart<C,Cell::type,-1*temp,Row>::res)+1>::value;
 };
 
 template<typename, int, int, int, Direction, int>
