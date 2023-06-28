@@ -8,14 +8,15 @@
 #include "BoardCell.h"
 #include "List.h"
 
-//todo: solve problem
+template<typename>
+struct GameBoard;
 
-template<List<List<BoardCell>> B, int W, int L>
-struct GameBoard{
+template<typename T, typename... TT>
+struct GameBoard<List<T,TT...>>{
+    typedef List<T,TT...> board;
     enum {
-        board = B,
-        width = W,
-        length = L
+        width = T::size,
+        length = List<T,TT...>::size
     };
 };
 
