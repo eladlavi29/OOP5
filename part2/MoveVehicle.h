@@ -179,7 +179,7 @@ struct MoveVehicle_Horiz<GameBoard<List<TT...>>, R, C, D, A>{
     static_assert(Cell::type!=EMPTY,"The Selected Cell is EMPTY");
     static_assert(Comp_Directions<Cell::direction,D>::value, "Directions of car and movement are Not Compatible!");
     typedef find_edges_horiz<GameBoard<List<TT...>>, R, C, D, A> Temp;
-    //typedef typename MoveVehicleAux<GameBoard<List<TT...>>, R, Temp::start, Temp::end, D, A>::gameboard board;
+    typedef typename MoveVehicleAux<A, R, Temp::start,Temp::end, D, GameBoard<List<TT...>>>::gameboard board;
 };
 
 
