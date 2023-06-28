@@ -8,10 +8,13 @@
 #include "CellType.h"
 #include "Direction.h"
 
+template<CellType T, Direction D, int L>
 struct BoardCell{
-    CellType type;
-    Direction direction;
-    int length;
+    enum {
+        type = T,
+        direction = D,
+        length = L
+    };
 };
 
 #endif //OOP5_BOARDCELL_H

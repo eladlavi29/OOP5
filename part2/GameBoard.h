@@ -8,10 +8,15 @@
 #include "BoardCell.h"
 #include "List.h"
 
+//todo: solve problem
+
+template<List<List<BoardCell>> B, int W, int L>
 struct GameBoard{
-    List<List<BoardCell>> board;
-    int width;
-    int length;
+    enum {
+        board = B,
+        width = W,
+        length = L
+    };
 };
 
 #endif //OOP5_GAMEBOARD_H
