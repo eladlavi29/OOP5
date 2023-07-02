@@ -1,29 +1,27 @@
-//
-// Created by amirb on 28/06/2023.
-//
-
 #include <iostream>
-using namespace std;
-#include "MoveVehicle.h"
-#include "BoardCell.h"
-#include "List.h"
-#include "GameBoard.h"
+#include "RushHour.h"
 #include "Printer.h"
 
-int main() {
-    typedef BoardCell<A, RIGHT, 2> Cell1;
-    typedef BoardCell<A, RIGHT, 2> Cell2;
-    typedef BoardCell<EMPTY, DOWN, 3> Cell3;
-    typedef BoardCell<EMPTY, LEFT, 8> Cell4;
-    typedef BoardCell<B, LEFT, 1> Cell5;
+typedef GameBoard< List<
+        List < BoardCell< EMPTY , RIGHT , 1>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< O , DOWN , 3>, BoardCell< EMPTY , RIGHT , 0> >,
+        List < BoardCell< EMPTY , RIGHT , 2>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< A , RIGHT , 2>, BoardCell< A , LEFT , 2>, BoardCell< O , DOWN , 3>, BoardCell< EMPTY , RIGHT , 0> >,
+        List < BoardCell< EMPTY , RIGHT , 3>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< X , RIGHT , 2>, BoardCell< X , LEFT , 2>, BoardCell< O , UP , 3>, BoardCell< EMPTY , RIGHT , 0> >,
+        List < BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0> >,
+        List < BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< B , DOWN , 2>, BoardCell< P , RIGHT , 3>, BoardCell< P , RIGHT , 3>, BoardCell< P , LEFT , 3> >,
+        List < BoardCell< EMPTY , RIGHT , 0>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< B , UP , 2>, BoardCell< EMPTY , RIGHT , 0>, BoardCell< C , RIGHT , 2>, BoardCell< C , LEFT , 2> >
+> > gameBoard;
 
-    typedef List<Cell1, Cell2, Cell3, Cell4, Cell5> Raw1;
+typedef List<
+        Move < B, UP, 1 > , Move < C, LEFT, 4 > , Move < A, LEFT, 2 > , Move < X, LEFT, 2 > , Move < B, UP, 3 > , Move < P, LEFT, 3 > , Move < O, DOWN, 3 >
+> moves;
 
-    typedef List<Raw1> board;
+int main(){
+    Printer<gameBoard>::print(std::cout);
+    static_assert(List<BoardCell< EMPTY , RIGHT , 0>,BoardCell< EMPTY , RIGHT , 0>,BoardCell< EMPTY , RIGHT , 0>>::size == 3, "Fail");
+    static_assert(List<>::size == 0, "Fail");
 
-    typedef GameBoard<board> gameboard1;
-    Printer<gameboard1>::print(std::cout);
+    static_assert(CheckSolution<gameBoard, moves>::result, "Fail"); // Game should be solved
 
-    typedef MoveVehicleAux<2, 0, 0, 2, RIGHT, gameboard1>::gameboard gameboard2;
-    Printer<gameboard2>::print(std::cout);
+    return 0;
 }
+

@@ -17,4 +17,4 @@ add_executable(OOP5
         part2/TransposeList.h
         part2/Utilities.h
 
-        part2/newTestForAmirMyBro.cpp)
+        part2/move_test.cpp)
