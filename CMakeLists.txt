@@ -16,5 +16,6 @@ add_executable(OOP5
         part2/Printer.h
         part2/TransposeList.h
         part2/Utilities.h
+        part2/RushHour.h
 
-        part2/move_test.cpp)
+        part2/Part2Examples.cpp)
