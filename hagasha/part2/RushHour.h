@@ -5,15 +5,7 @@
 #ifndef OOP5_RUSHHOUR_H
 #define OOP5_RUSHHOUR_H
 
-#include "BoardCell.h"
-#include "CellType.h"
-#include "Direction.h"
-#include "GameBoard.h"
-#include "List.h"
 #include "MoveVehicle.h"
-#include "TransposeList.h"
-#include "Utilities.h"
-
 
 //Start search from the downward right corner of the board
 #define NOT_FOUND (-1)

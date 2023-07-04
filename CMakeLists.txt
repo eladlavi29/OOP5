@@ -18,4 +18,4 @@ add_executable(OOP5
         part2/Utilities.h
         part2/RushHour.h
 
-        part2/Part2Examples.cpp)
+        part2/testCheckWinSolved1.cpp)
